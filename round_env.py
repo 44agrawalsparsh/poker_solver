@@ -198,15 +198,21 @@ class RoundEnv():
 		elif action == "allin":
 			# Calculate how much to raise to
 			
-			bet_size = self.state.stacks[cur_index] + self.state.bets[cur_index]
-			self.state.complete_bet_or_raise_to(bet_size)
+			amount = self.state.stacks[cur_index] + self.state.bets[cur_index]
+			if amount < self.state.stacks[cur_index]:
+				self.state.check_or_call()
+			else:
+				self.state.complete_bet_or_raise_to(amount)
 		elif action == "call" or action == "check":
 			self.state.check_or_call()
 		else:
 			assert 'bb' in action, (f"{action} not recognized")
 			#pdb.set_trace()
 			amount = int(float(action[:-2])*self.bb)
-			self.state.complete_bet_or_raise_to(amount)
+			if amount < self.state.stacks[cur_index]:
+				self.state.check_or_call()
+			else:
+				self.state.complete_bet_or_raise_to(amount)
 
 		self.path_to_preflop_range = os.path.join(self.path_to_preflop_range, pos, action)
 		
@@ -224,10 +230,16 @@ class RoundEnv():
 			self.state.check_or_call()
 		elif "Raise" in action or "Bet" in action:
 			amount = int(action.split("(")[1].split(")")[0])
-			self.state.complete_bet_or_raise_to(amount)
+			if amount < self.state.stacks[cur_index]:
+				self.state.check_or_call()
+			else:
+				self.state.complete_bet_or_raise_to(amount)
 		elif "All" in action:
-			bet_size = self.state.stacks[cur_index] + self.state.bets[cur_index]
-			self.state.complete_bet_or_raise_to(bet_size)
+			amount = self.state.stacks[cur_index] + self.state.bets[cur_index]
+			if amount < self.state.stacks[cur_index]:
+				self.state.check_or_call()
+			else:
+				self.state.complete_bet_or_raise_to(amount)
 		else:
 			raise ValueError("Unrecognized action")
 		

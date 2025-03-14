@@ -8,6 +8,7 @@ import sys
 import termios
 import tty
 import re
+import shutil
 
 # 1) Regex to remove ANSI escape codes
 ANSI_PATTERN = re.compile(r'\x1B\[[0-9;]*[A-Za-z]')
@@ -264,7 +265,7 @@ class GameEnv:
 		bb_cards, bb_info   = player_data[10], player_data[11]
 
 		# --- Build ASCII art ---
-		max_width = 100
+		max_width = shutil.get_terminal_size((100, 20)).columns  # Default to 100 if size can't be determined
 		left_width = max_width // 2   # 40
 		right_width = max_width - left_width  # 40
 

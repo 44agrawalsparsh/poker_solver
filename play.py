@@ -1,5 +1,5 @@
 from game_env import GameEnv
-
+from utils import clear_screen
 def get_blind_values():
 	while True:
 		try:
@@ -13,6 +13,7 @@ def get_blind_values():
 			print("Invalid input. Please enter integer values.")
 
 if __name__ == "__main__":
+	clear_screen()
 	sb, bb = get_blind_values()
 	game = GameEnv(sb=sb, bb=bb)
 
