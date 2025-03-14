@@ -1,4 +1,4 @@
-# poker_solver
+# GTOTrainerCLI
 Terminal tooling to practice games against GTO agents
 
 Full credit to the solver engine: https://github.com/b-inary/postflop-solver
