@@ -1,7 +1,7 @@
 import os
 import numpy as np
 from round_env import RoundEnv
-from utils import Position
+from utils import Position, clear_screen
 from random import shuffle
 from time import sleep
 import sys
@@ -51,6 +51,9 @@ class GameEnv:
 		self.player_positions = {player_id : Position(player_id) for player_id,_ in self.players}
 		self.position_to_player = {val.value : player_id for player_id, val in self.player_positions.items()}
 		self.stacks = {player_id : 50*self.bb for player_id,_ in self.players}
+
+		self.correct_decisions = 0
+		self.incorrect_decisions = 0
 
 	def order_actions_by_aggression(self, actions):
 		"""
@@ -136,11 +139,16 @@ class GameEnv:
 
 			##TODO - look at entropy to tell it which action it expected
 
-			text_print = f"\n\n\nGTO strategy was: {gto_strat}" 
+			text_print = "\n"
+
+			for action in actions:
+				text_print += f"\n{action} : {(gto_strat[action]*100):.2f}%"
 			if decision == theo_action:
-				text_print += f"\nBased off the entropy of {entropy:.2f} you correctly picked {theo_action}."
+				self.correct_decisions += 1
+				text_print += f"\n\nBased off the entropy of {entropy:.2f} you correctly picked {theo_action}."
 			else:
-				text_print += f"\nBased off the entropy of {entropy:.2f} you should have picked {theo_action}."
+				self.incorrect_decisions += 1
+				text_print += f"\n\nBased off the entropy of {entropy:.2f} you should have picked {theo_action}."
 			print(text_print)
 		else:
 			
@@ -170,10 +178,7 @@ class GameEnv:
 		return ch
 	
 	def render_screen(self, state):
-		if os.name == 'nt':  # For Windows
-			os.system('cls')
-		else:  # For Unix-like systems (Linux, macOS, etc.)
-			os.system('clear')
+		clear_screen()
 		# --- Determine round status ---
 		round_alive = 'current_bets' in state
 
@@ -187,6 +192,9 @@ class GameEnv:
 			meta_line = f"Small Blind: {sb} | Big Blind: {bb} | Entropy: {entropy:.2f}"
 		else:
 			meta_line = f"Small Blind: {sb} | Big Blind: {bb}"
+
+		score_line = f" | GTO Movement Rate: {self.correct_decisions}/{self.correct_decisions + self.incorrect_decisions}"
+		meta_line += score_line
 
 		# --- Suit symbols and color mapping ---
 		suit_symbols = {
@@ -256,7 +264,7 @@ class GameEnv:
 		bb_cards, bb_info   = player_data[10], player_data[11]
 
 		# --- Build ASCII art ---
-		max_width = 80
+		max_width = 100
 		left_width = max_width // 2   # 40
 		right_width = max_width - left_width  # 40
 
@@ -292,12 +300,20 @@ class GameEnv:
 			action = self.collect_action(state)
 			print(f"\n\n{state['player_turn']} chose to {action}\n\n")
 			round.play_move(action)
+			input("Press enter to continue to next turn")
 			if not round.round_alive():
 				state = round.get_state()
 				self.render_screen(state)
-			input("Press enter to continue")
+				input("Press enter to continue to next hand")
+			
 
 		#update stacks and cycle players
 		self.stacks = {player_id : state["stacks"][self.player_positions[player_id].value] for player_id,_ in self.players}
 		self.player_positions = {player_id : Position((self.player_positions[player_id].value + 1) % self.num_players) for player_id,_ in self.players}
 		self.position_to_player = {val.value : player_id for player_id, val in self.player_positions.items()}
+
+		if np.sum(np.array(list(self.stacks.values())) <= 0) > 0:
+			clear_screen()
+			print("One player has busted! Restarting all stacks...")
+			self.stacks = {player_id : 50*self.bb for player_id,_ in self.players}
+			input("Press enter to continue to next hand")

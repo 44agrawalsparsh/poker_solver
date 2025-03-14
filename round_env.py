@@ -136,7 +136,12 @@ class RoundEnv():
 			output["current_bets"] = self.state.bets
 			output["pot_amount"] = self.state.total_pot_amount
 			output["stacks"] = self.state.stacks
-			pos,_ = self.cur_actor()
+			try:
+				pos,_ = self.cur_actor()
+			except Exception as e:
+				print(e)
+				pdb.set_trace()
+
 			output["player_turn"] = pos
 
 			hole_cards = [(RoundEnv.extract_card(c[0]), RoundEnv.extract_card(c[1])) for c in self.original_hole_cards]
@@ -274,8 +279,8 @@ class RoundEnv():
 
 				effective_stack = self.state.get_effective_stack(active_players[0].value)
 				pot = self.state.total_pot_amount
-
-				self.state.deal_board()
+				while self.state.can_deal_board():
+					self.state.deal_board()
 
 				board = [RoundEnv.extract_card(c[0]) for c in self.state.board_cards]
 				board = [f"{c[0]}{c[1]}" for c in board]

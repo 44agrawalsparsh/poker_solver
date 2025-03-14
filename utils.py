@@ -90,3 +90,8 @@ def solve_postflop(oop_range, ip_range, board, pot, effective_stacks):
           
     return output
 
+def clear_screen():
+    if os.name == 'nt':  # For Windows
+        os.system('cls')
+    else:  # For Unix-like systems (Linux, macOS, etc.)
+        os.system('clear')
