@@ -19,4 +19,4 @@ This is a work in progress, but should still be very useful for practice!
 
 Will try to add documentation in the near future!
 
-![Demo](https://github.com/agrawalsparsh/poker_solver/figures/output.gif)
+![Demo](https://github.com/agrawalsparsh/poker_solver/blob/main/figures/output.gif)
