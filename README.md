@@ -3,7 +3,6 @@ Terminal tooling to practice games against GTO agents
 
 Full credit to the solver engine: https://github.com/b-inary/postflop-solver
 
-
 Notes on usage:
 
 Preflop ranges are up to the user, system expects format such as
@@ -19,3 +18,5 @@ Afterwards, simply call play.py
 This is a work in progress, but should still be very useful for practice!
 
 Will try to add documentation in the near future!
+
+![Demo](https://github.com/agrawalsparsh/poker_solver/figures/output.gif)
