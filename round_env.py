@@ -199,7 +199,7 @@ class RoundEnv():
 			# Calculate how much to raise to
 			
 			amount = self.state.stacks[cur_index] + self.state.bets[cur_index]
-			if amount < self.state.stacks[cur_index]:
+			if amount > self.state.stacks[cur_index]:
 				self.state.check_or_call()
 			else:
 				self.state.complete_bet_or_raise_to(amount)
@@ -209,7 +209,7 @@ class RoundEnv():
 			assert 'bb' in action, (f"{action} not recognized")
 			#pdb.set_trace()
 			amount = int(float(action[:-2])*self.bb)
-			if amount < self.state.stacks[cur_index]:
+			if amount > self.state.stacks[cur_index]:
 				self.state.check_or_call()
 			else:
 				self.state.complete_bet_or_raise_to(amount)
@@ -230,13 +230,13 @@ class RoundEnv():
 			self.state.check_or_call()
 		elif "Raise" in action or "Bet" in action:
 			amount = int(action.split("(")[1].split(")")[0])
-			if amount < self.state.stacks[cur_index]:
+			if amount > self.state.stacks[cur_index]:
 				self.state.check_or_call()
 			else:
 				self.state.complete_bet_or_raise_to(amount)
 		elif "All" in action:
 			amount = self.state.stacks[cur_index] + self.state.bets[cur_index]
-			if amount < self.state.stacks[cur_index]:
+			if amount > self.state.stacks[cur_index]:
 				self.state.check_or_call()
 			else:
 				self.state.complete_bet_or_raise_to(amount)
